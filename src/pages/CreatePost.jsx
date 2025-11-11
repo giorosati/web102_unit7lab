@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './CreatePost.css'
 
-const CreatePost = () => {
+const CreatePost = async () => {
 
     const [post, setPost] = useState({title: "", author: "", description: ""})
 
@@ -15,9 +15,22 @@ const CreatePost = () => {
         })
     }
 
+    // Form submit handler — receives the submit event and prevents the default
+    // browser behavior (page reload). Add further submit logic here (e.g. call API).
+    const createPost = async (event) => {
+        event.preventDefault()
+        await supabase
+            .from('Posts')
+            .insert({title: post.title, author: post.author, description: post.description})
+            .select()
+        window.location = "/"
+        // eslint-disable-next-line no-console
+        console.log('createPost called with', post)
+    }
+
     return (
         <div>
-            <form>
+eos             <form onSubmit={createPost}>
                 <label htmlFor="title">Title</label> <br />
                 <input type="text" id="title" name="title" onChange={handleChange} /><br />
                 <br/>
@@ -30,7 +43,7 @@ const CreatePost = () => {
                 <textarea rows="5" cols="50" id="description" name="description" onChange={handleChange}>
                 </textarea>
                 <br/>
-                <input type="submit" value="Submit" />
+                <input type="submit" value="Submit" onClick={createPost} />
             </form>
         </div>
     )
